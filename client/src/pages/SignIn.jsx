@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 const SignIn = () => {
   return (
@@ -36,13 +38,15 @@ const SignIn = () => {
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               >
                 Sign In
+                
               </button>
               <button
                 type="button"
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
               >
-                Continue with Google
+               <FontAwesomeIcon icon={faGoogle} />
               </button>
+              
             </div>
             <p>
               Want to create an account?{' '}
