@@ -1,9 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { Link,useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({});
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const handleChange = (e) => {
+        setFormData({
+            ...formData, [e.target.id]: e.target.value
+            //poprzednia wartosc (formData) i przyjmujemy wartosc aktualnie wypelnianego pola
+        })
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try{
+            setLoading(true);
+            setError(false);
+            const res = await fetch('api/auth/signin', {
+
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            const data = await res.json();
+            setLoading(false);
+            if(data.success === false){
+                setError(true); 
+                return;   
+            }
+            navigate('/')
+        }catch (error){
+            setLoading(false);
+            setError(true);
+        }
+        
+
+    }
   return (
+
+    
     <div className="min-h-screen flex items-start justify-center bg-cover pt-24">
       <div className="w-80% h-96 flex bg-white bg-opacity-40 rounded-lg shadow-md">
         <div className="w-1/2 p-12">
@@ -15,13 +55,14 @@ const SignIn = () => {
         </div>
         <div className="w-1/2 p-8">
           <h2 className="text-2xl font-semibold mb-4 text-blue-500">Sign In</h2>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
                 type="email"
                 id="email"
                 placeholder='E-mail'
                 className="w-full p-2 border rounded"
+                onChange={handleChange}
               />
             </div>
             <div className="mb-4">
@@ -30,14 +71,16 @@ const SignIn = () => {
                 id="password"
                 placeholder='Password'
                 className="w-full p-2 border rounded"
+                onChange={handleChange}
               />
             </div>
             <div className="flex justify-between items-center mb-4">
               <button
+                disabled={loading}
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-95 disabled:opacity-80"
               >
-                Sign In
+               {loading ? 'Loading...' : 'Sign In'}
                 
               </button>
               <button
@@ -48,11 +91,12 @@ const SignIn = () => {
               </button>
               
             </div>
+            <p className='text-red-500 mb-2'>{error && "Error occured!"}</p>
             <p>
-              Want to create an account?{' '}
-              <a href="/sign-up" className="text-blue-500">
+              Don't have an account?{' '}
+              <Link to="/sign-up" className="text-blue-500">
                 Sign up
-              </a>
+              </Link>
             </p>
           </form>
         </div>
