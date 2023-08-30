@@ -8,6 +8,7 @@ import {
     signInFailure,
   } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import OAuth from '../components/OAuth';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({});
@@ -90,12 +91,7 @@ const SignIn = () => {
                {loading ? 'Loading...' : 'Sign In'}
                 
               </button>
-              <button
-                type="button"
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-              >
-               <FontAwesomeIcon icon={faGoogle} />
-              </button>
+              <OAuth></OAuth>
               
             </div>
             <p className='text-red-500 mb-2'>{error ? error.message || "Error occured!" : ""}</p>
