@@ -29,7 +29,7 @@ export const signin = async (req, res, next) => {
         res
         .cookie('acc_token', token, { httpOnly: true, expires: expireDate })
         .status(200)
-        .json({rest});
+        .json(rest);
     } catch(err){
        next(err);
     }
@@ -45,7 +45,7 @@ export const google = async (req, res, next) => {
             res
             .cookie('acc_token', token, { httpOnly: true, expires: expireDate })
             .status(200)
-            .json({rest});
+            .json(rest);
         } else{
             const generatedPassword = 
             Math.random().toString(36).slice(-8);
@@ -66,7 +66,7 @@ export const google = async (req, res, next) => {
             res
         .cookie('acc_token', token, { httpOnly: true, expires: expireDate })
         .status(200)
-        .json({rest});
+        .json(rest);
         }
     } catch(err){
         next(err);

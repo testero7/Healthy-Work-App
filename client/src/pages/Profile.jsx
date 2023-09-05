@@ -4,18 +4,21 @@ import { useSelector } from 'react-redux';
 import { useRef } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
+import { useDispatch } from 'react-redux';
+import { updateUserStart, updateUserSuccess, updateUserFailure,} from '../redux/user/userSlice';
 
 export default function Profile() {
     const fileRef = useRef(null);
     const [image, setImage] = useState(undefined);
-    const { loading, error } = useSelector((state) => state.user);
-    const { currentUser } = useSelector((state) => state.user);
+    const { currentUser, loading, error} = useSelector((state) => state.user);
     const [imagePercent, setImagePercent] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [actionType, setActionType] = useState('');
     const [ imageError, setImageError ] = useState(false);
     const [ formData, setFormData] = useState({});
-    console.log(formData);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
+    const dispatch = useDispatch();
+    console.log(currentUser);
     useEffect(() =>{
         if(image){
             handleUpload(image);
@@ -66,18 +69,50 @@ export default function Profile() {
 //       }
 //     }
 //   }
+
+  const handleChange = (e) => {
+    setFormData({
+        ...formData, [e.target.id]: e.target.value
+    });
+  }
+
+  //console.log(currentUser.rest._id);
+  const handleSubmit = async (e) =>{
+    e.preventDefault();
+    try{
+        dispatch(updateUserStart());
+        const res = await fetch(`/api/user/update/${currentUser._id}`,
+        {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        const data = await res.json();
+        if (data.success === false) {
+            dispatch(updateUserFailure(data));
+            return;
+        }
+        dispatch(updateUserSuccess(data));
+        setUpdateSuccess(true);
+    } catch(err) {
+        dispatch(updateUserFailure(err));
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-4xl font-sans text-center mb-7 text-blue-400">Profile</h1>
-        <form className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input type='file' 
             ref={fileRef} 
             hidden accept='image/*'
             onChange={(e) => setImage(e.target.files[0])}
             />
           <img
-            src={formData.photo || currentUser.rest.photo}
+            src={formData.photo || currentUser.photo}
             alt="profile"
             className="h-24 w-24 mt-2 self-center cursor-pointer rounded-full object-cover"
             onClick={() => fileRef.current.click()}
@@ -94,24 +129,27 @@ export default function Profile() {
           </p>
             
           <input
-            defaultValue={currentUser.rest.username}
+            defaultValue={currentUser.username}
             type="text"
             id="username"
             placeholder="Username"
             className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
           />
           <input
-            defaultValue={currentUser.rest.email}
+            defaultValue={currentUser.email}
             type="email"
             id="email"
             placeholder="E-mail"
             className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
           />
           <input
             type="password"
             id="password"
             placeholder="Password"
             className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
           />
           <button
             disabled={loading}
@@ -140,6 +178,8 @@ export default function Profile() {
             {loading ? 'Loading...' : 'Sign out'}
           </button>
         </div>
+        <p className='text-red-600 mt-5'>{error && "Something went wrong!"}</p>
+            <p className='text-green-500 mt-5'>{updateSuccess && "User updated!"}</p>
       </div>
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -160,7 +200,9 @@ export default function Profile() {
               >
                 Confirm
               </button>
+              
             </div>
+           
           </div>
         </div>
       )}
