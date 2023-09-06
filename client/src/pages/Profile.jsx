@@ -5,7 +5,14 @@ import { useRef } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
 import { useDispatch } from 'react-redux';
-import { updateUserStart, updateUserSuccess, updateUserFailure,} from '../redux/user/userSlice';
+import { updateUserStart,
+   updateUserSuccess,
+    updateUserFailure,
+     deleteUserStart,
+     deleteUserFailure,
+     deleteUserSuccess,
+     signOut
+    } from '../redux/user/userSlice';
 
 export default function Profile() {
     const fileRef = useRef(null);
@@ -55,20 +62,37 @@ export default function Profile() {
     setActionType(action);
   };
 
-  const handleConfirmAction = () => {
+  const handleConfirmAction = async () => {
     // Handle the action (e.g., delete account) here
+   
     setShowModal(false);
+
+
+    if (actionType === 'delete') {
+      try {
+        dispatch(deleteUserStart());
+        const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+
+        if (data.success === false) {
+          dispatch(deleteUserFailure(data));
+          return;
+        }
+        dispatch(deleteUserSuccess());
+      } catch (err) {
+        dispatch(deleteUserFailure(err));
+      }
+    } else if (actionType === 'signout') {
+      try {
+        await fetch('/api/auth/signout');
+        dispatch(signOut());
+      } catch (err){
+        console.log(err);
+      }
+    }
   };
-//   service firebase.storage {
-//     match /b/{bucket}/o {
-//       match /{allPaths=**} {
-//         allow read;
-//         allow write: if
-//         request.resource.size < 2 * 1024 * 1024 &&
-//         request.resource.contentType.matches('image/.*')
-//       }
-//     }
-//   }
 
   const handleChange = (e) => {
     setFormData({
