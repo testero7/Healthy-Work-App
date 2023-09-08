@@ -3,7 +3,10 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
+import pomodoroRoutes from './routes/pomodoro.route.js';
+import notificationRoutes from './routes/notification.route.js';
 import cookieParser from 'cookie-parser';
+import Pomodoro from './models/pomodoro.model.js';
 
 dotenv.config();
 
@@ -24,9 +27,15 @@ app.listen(3000, () => {
     console.log("Server on port 3000!");
 });
 
+
+
 app.use("/api/user", userRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/pomodoro", pomodoroRoutes);
+
+app.use("/api/notification", notificationRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
