@@ -5,10 +5,9 @@ const pomodoroSchema = new mongoose.Schema(
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User' },
-        name:{
-            type: String,
-            requred: true,
-        },
+        confId:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Configuration' },
         startTime:{
             type: Date,
             requred: true,
@@ -17,15 +16,23 @@ const pomodoroSchema = new mongoose.Schema(
             type: Date,
             requred: true,
         },
+        workTime:{
+            type: Number,
+        },
         breakTime:{
             type: Number,
             requred: true,
-            default: 15,
+            default: 0,
         },
-        breakAfter:{
+        breakCounter:{
             type: Number,
             requred: true,
-            default: 120,
+            default: 0,
+        },
+        status:{
+            type: String,
+            requred: true,
+            default: "In progress"
         }
     },
  {timestamps: true});

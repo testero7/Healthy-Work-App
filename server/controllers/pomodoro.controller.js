@@ -7,42 +7,37 @@ export const testPomodoro = (req, res) => {
             message: "Api test",
         });
 };
-// const samplePomodoro = new Pomodoro({
-//     userId: '64edc3eb9faf1b0eec86be93', // Dodaj rzeczywiste dane zgodne z modelem
-//     startTime: new Date(),
-//     endTime: new Date(),
-//     workDuration: 25, // Przykładowe dane
-//     breakDuration: 5, // Przykładowe dane
-//   });
-  
-//   samplePomodoro.save();
 
+//dodac konfiguracje do pomdooro
 export const addPomodoro = async (req, res, next) => {
-    const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
-    const { name, startTime, endTime, breakTime, breakAfter } = req.body;
-  
-    // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
-    if (req.user.id !== userId) {
+  const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
+  const confId = req.params.confId; // Pobierz ID konfiguracji z parametru URL
+  const { name, startTime, endTime, allTime, breakTime, breakCounter } = req.body;
+
+  // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
+  if (req.user.id !== userId) {
       return next(errorHandler(401, 'You can only add Pomodoro sessions for your own account!'));
-    }
-  
-    try {
+  }
+
+  try {
       const newPomodoro = new Pomodoro({
-        userId: userId,
-        name: name,
-        startTime: startTime,
-        endTime: endTime,
-        breakTime: breakTime || 15,
-        breakAfter: breakAfter || 120
+          userId: userId,
+          confId: confId,
+          name: name,
+          startTime: startTime,
+          endTime: endTime,
+          allTime: allTime,
+          breakCounter: breakCounter,
+          breakTime: breakTime,
       });
-  
+
       await newPomodoro.save();
-  
+
       res.status(201).json(newPomodoro); // Zwróć nowo utworzony obiekt Pomodoro
-    } catch (error) {
+  } catch (error) {
       next(error);
-    }
-  };
+  }
+};
   
 
 
@@ -59,6 +54,28 @@ export const getPomodorosForUser = async (req, res, next) => {
     }
 };
   
+export const getPomodoroById = async (req, res, next) => {
+  const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
+  const pomodoroId = req.params.pomodoroId; // Pobierz ID sesji Pomodoro z parametru URL
+
+  // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
+  if (req.user.id !== userId) {
+    return next(errorHandler(401, 'You can only get Pomodoro sessions for your own account!'));
+  }
+
+  try {
+    const pomodoro = await Pomodoro.findOne({ _id: pomodoroId, userId: userId });
+
+    if (!pomodoro) {
+      return next(errorHandler(404, 'Pomodoro session not found'));
+    }
+
+    res.status(200).json(pomodoro);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const deletePomodoro = async (req, res, next) => {
     const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
@@ -79,11 +96,10 @@ export const deletePomodoro = async (req, res, next) => {
   };
 
   export const updatePomodoro = async (req, res, next) => {
-    const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
-    const pomodoroId = req.params.pomodoroId; // Pobierz ID sesji Pomodoro z parametru URL
-    const { name, startTime, endTime, breakTime, breakAfter } = req.body;
+    const userId = req.params.id;
+    const pomodoroId = req.params.pomodoroId;
+    const updateFields = req.body; // Przyjmuj wszystkie pola, które chcesz zaktualizować
   
-    // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
     if (req.user.id !== userId) {
       return next(errorHandler(401, 'You can only update Pomodoro sessions for your own account!'));
     }
@@ -91,15 +107,7 @@ export const deletePomodoro = async (req, res, next) => {
     try {
       const updatedPomodoro = await Pomodoro.findOneAndUpdate(
         { _id: pomodoroId, userId: userId },
-        {
-          $set: {
-            name: name,
-            startTime: startTime,
-            endTime: endTime,
-            breakTime: breakTime,
-            breakAfter: breakAfter
-          },
-        },
+        { $set: updateFields }, // Użyj wszystkich pól
         { new: true }
       );
   

@@ -12,7 +12,7 @@ return location.pathname === pathname;
 };
     
     return (
-        <header className='py-4 sticky top-0 z-50 backdrop-blur-md transition backdrop-filter duration-300'>
+        <div className=' py-4 sticky top-0 z-50 backdrop-blur-md transition backdrop-filter duration-300'>
           <div className='container mx-auto flex items-center justify-between'>
             <Link to='/' className='text-3xl font-bold text-white transition hover:text-blue-300'>
               WorkLife Harmony
@@ -48,6 +48,6 @@ return location.pathname === pathname;
               )}
             </nav>
           </div>
-        </header>
+        </div>
       );
 }

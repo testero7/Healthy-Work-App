@@ -6,7 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import pomodoroRoutes from './routes/pomodoro.route.js';
 import notificationRoutes from './routes/notification.route.js';
 import cookieParser from 'cookie-parser';
-import Pomodoro from './models/pomodoro.model.js';
+import configurationRoutes from './routes/configuration.route.js';
 
 dotenv.config();
 
@@ -36,6 +36,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/pomodoro", pomodoroRoutes);
 
 app.use("/api/notification", notificationRoutes);
+
+app.use("/api/configuration", configurationRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;

@@ -8,6 +8,6 @@ router.get('/testNotification', testNotification);
 router.get('/getNotification/:id',verifyToken, getNotification);
 router.post('/addNotification/:id',verifyToken, addNotification);
 router.delete('/deleteNotification/:id/:notificationId',verifyToken, deleteNotification);
-router.post('/updateNotification/:id/:notificationId',verifyToken, updateNotification);
+router.put('/updateNotification/:id/:notificationId',verifyToken, updateNotification);
 
 export default router;

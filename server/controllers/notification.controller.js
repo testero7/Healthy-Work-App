@@ -66,9 +66,11 @@ export const updateNotification = async (req, res, next) => {
   const userId = req.params.id;
   const notificationId = req.params.notificationId;
   const { waterNoti, stretchNoti, eyeNoti, postureNoti, lightNoti } = req.body;
+  
   if (req.user.id !== userId) {
     return next(errorHandler(401, 'You can only update notifications for your own account!'));
   }
+
   try {
     const updatedNotification = await Notification.findOneAndUpdate(
       { _id: notificationId, userId: userId },

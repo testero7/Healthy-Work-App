@@ -20,8 +20,11 @@ const userSchema = new mongoose.Schema(
         photo:{
             type: String,
             default: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
-        }
-
+        },
+        refreshToken: {
+            type: String,
+            default: null, 
+          },
     },
  {timestamps: true});
 

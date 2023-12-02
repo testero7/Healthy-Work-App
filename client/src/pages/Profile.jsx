@@ -26,6 +26,74 @@ export default function Profile() {
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const dispatch = useDispatch();
     console.log(currentUser);
+    
+    function getRefreshToken() {
+      // Załóżmy, że currentUser jest dostępny w danym kontekście
+      const refreshToken = currentUser ? currentUser.refreshToken : null;
+      return refreshToken;
+    }
+    async function refreshAccessToken(refreshToken) {
+      try {
+        const response = await fetch('/api/auth/refresh-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ refreshToken }),
+        });
+    
+        if (response.ok) {
+          const { accessToken } = await response.json();
+          return accessToken;
+        } else {
+          throw new Error('Błąd odświeżania tokenu');
+        }
+      } catch (error) {
+        console.error('Błąd odświeżania tokenu:', error);
+        throw error;
+      }
+    }
+  
+  
+    async function authenticatedFetch(url, options) {
+      try {
+        const refreshToken = getRefreshToken();
+        const newAccessToken = await refreshAccessToken(refreshToken);
+        const response = await fetch(url, options);
+  
+        if (!response) {
+          throw new Error('Undefined response received');
+        }
+  
+        if (response.status === 401) {
+          
+  
+          if (!refreshToken) {
+            console.error('Unauthorized request. No refresh token available.');
+            throw new Error('Unauthorized request');
+          }
+  
+          
+  
+          // Retry the original request with the new access token
+          const newOptions = {
+            ...options,
+            headers: {
+              ...options.headers,
+              'Authorization': `Bearer ${newAccessToken}`,
+            },
+          };
+  
+          return fetch(url, newOptions);
+        }
+  
+        return response;
+      } catch (error) {
+        console.error('Fetch error:', error);
+        throw error;
+      }
+    }
+    
     useEffect(() =>{
         if(image){
             handleUpload(image);
@@ -71,7 +139,7 @@ export default function Profile() {
     if (actionType === 'delete') {
       try {
         dispatch(deleteUserStart());
-        const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        const res = await authenticatedFetch(`/api/user/delete/${currentUser._id}`, {
           method: 'DELETE',
         });
         const data = await res.json();
@@ -86,7 +154,7 @@ export default function Profile() {
       }
     } else if (actionType === 'signout') {
       try {
-        await fetch('/api/auth/signout');
+        await authenticatedFetch('/api/auth/signout');
         dispatch(signOut());
       } catch (err){
         console.log(err);
@@ -105,7 +173,7 @@ export default function Profile() {
     e.preventDefault();
     try{
         dispatch(updateUserStart());
-        const res = await fetch(`/api/user/update/${currentUser._id}`,
+        const res = await authenticatedFetch(`/api/user/update/${currentUser._id}`,
         {
             method: "POST",
             headers: {
@@ -126,110 +194,113 @@ export default function Profile() {
   }
 
   return (
-    <div className="p-3 max-w-lg mx-auto bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h1 className="text-4xl font-sans text-center mb-7 text-blue-400">Profile</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <input type='file' 
-            ref={fileRef} 
-            hidden accept='image/*'
-            onChange={(e) => setImage(e.target.files[0])}
-            />
-          <img
-            src={formData.photo || currentUser.photo}
-            alt="profile"
-            className="h-24 w-24 mt-2 self-center cursor-pointer rounded-full object-cover"
-            onClick={() => fileRef.current.click()}
-          />
-          <p className='text-sm self-center'>
-            {imageError ? (
-            <span className='text-red-700'>Error occured!</span>
-          ) : imagePercent > 0 && imagePercent < 100 ? (
-            <span className='text-blue-400'>{`Uploading... + ${imagePercent}
-            %
-            `}</span>) : imagePercent === 100 ? (
-                <span className='text-green-500'>Image uploaded!</span>) : '' 
-            }
-          </p>
-            
-          <input
-            defaultValue={currentUser.username}
-            type="text"
-            id="username"
-            placeholder="Username"
-            className="bg-slate-100 rounded-lg p-3"
-            onChange={handleChange}
-          />
-          <input
-            defaultValue={currentUser.email}
-            type="email"
-            id="email"
-            placeholder="E-mail"
-            className="bg-slate-100 rounded-lg p-3"
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            id="password"
-            placeholder="Password"
-            className="bg-slate-100 rounded-lg p-3"
-            onChange={handleChange}
-          />
-          <button
-            disabled={loading}
-            type="submit"
-            className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:opacity-95 disabled:opacity-80"
-          >
-            {loading ? 'Loading...' : 'Update'}
-          </button>
-        </form>
-        <div className="mt-4 flex justify-between">
-          <button
-            onClick={() => handleAction('delete')}
-            disabled={loading}
-            type="button"
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:opacity-95 disabled:opacity-80"
-          >
-            {loading ? 'Loading...' : 'Delete account'}
-          </button>
-
-          <button
-            onClick={() => handleAction('signout')}
-            disabled={loading}
-            type="button"
-            className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:opacity-95 disabled:opacity-80"
-          >
-            {loading ? 'Loading...' : 'Sign out'}
-          </button>
-        </div>
-        <p className='text-red-600 mt-5'>{error && "Something went wrong!"}</p>
-            <p className='text-green-500 mt-5'>{updateSuccess && "User updated!"}</p>
-      </div>
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg">
-            <p className="text-xl">
-              Are you sure you want to {actionType === 'delete' ? 'delete your account' : 'sign out'}?
-            </p>
-            <div className="mt-4 flex justify-end">
+    <div className="h-screen flex items-center justify-center">
+      <div className="w-1/3 mb-24 bg-gray-100">
+        <div className="p-3 mx-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h1 className="text-4xl font-sans text-center mb-7 text-blue-400">Profile</h1>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <input
+                type='file'
+                ref={fileRef}
+                hidden
+                accept='image/*'
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+              <img
+                src={formData.photo || currentUser.photo}
+                alt="profile"
+                className="h-24 w-24 mt-2 self-center cursor-pointer rounded-full object-cover"
+                onClick={() => fileRef.current.click()}
+              />
+              <p className='text-sm self-center'>
+                {imageError ? (
+                  <span className='text-red-700'>Error occurred!</span>
+                ) : imagePercent > 0 && imagePercent < 100 ? (
+                  <span className='text-blue-400'>{`Uploading... + ${imagePercent}%`}</span>
+                ) : imagePercent === 100 ? (
+                  <span className='text-green-500'>Image uploaded!</span>
+                ) : ''}
+              </p>
+  
+              <input
+                defaultValue={currentUser.username}
+                type="text"
+                id="username"
+                placeholder="Username"
+                className="bg-slate-100 rounded-lg p-3"
+                onChange={handleChange}
+              />
+              <input
+                defaultValue={currentUser.email}
+                type="email"
+                id="email"
+                placeholder="E-mail"
+                className="bg-slate-100 rounded-lg p-3"
+                onChange={handleChange}
+              />
+              <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                className="bg-slate-100 rounded-lg p-3"
+                onChange={handleChange}
+              />
               <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-500 hover:text-gray-700 mr-3"
+                disabled={loading}
+                type="submit"
+                className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:opacity-95 disabled:opacity-80"
               >
-                Cancel
+                {loading ? 'Loading...' : 'Update'}
               </button>
+            </form>
+            <div className="mt-4 flex justify-between">
               <button
-                onClick={handleConfirmAction}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:opacity-95"
+                onClick={() => handleAction('delete')}
+                disabled={loading}
+                type="button"
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:opacity-95 disabled:opacity-80"
               >
-                Confirm
+                {loading ? 'Loading...' : 'Delete account'}
               </button>
-              
+  
+              <button
+                onClick={() => handleAction('signout')}
+                disabled={loading}
+                type="button"
+                className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:opacity-95 disabled:opacity-80"
+              >
+                {loading ? 'Loading...' : 'Sign out'}
+              </button>
             </div>
-           
+            <p className='text-red-600 mt-5'>{error && "Something went wrong!"}</p>
+            <p className='text-green-500 mt-5'>{updateSuccess && "User updated!"}</p>
           </div>
+          {showModal && (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <div className="bg-white p-4 rounded-lg shadow-lg">
+                <p className="text-xl">
+                  Are you sure you want to {actionType === 'delete' ? 'delete your account' : 'sign out'}?
+                </p>
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="text-gray-500 hover:text-gray-700 mr-3"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmAction}
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:opacity-95"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
-}
+          }  
