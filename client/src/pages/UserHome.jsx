@@ -32,7 +32,7 @@ const UserHome = () => {
           className="absolute inset-0 w-full h-full object-cover"
           onClick={handleVideoClick}
         >
-          <source src="https://firebasestorage.googleapis.com/v0/b/mern-app-426e4.appspot.com/o/pexels_videos_2759477%20(2160p).mp4?alt=media&token=20a5d4b8-55e6-434c-ab5e-1147a7b607a0" type="video/mp4" />
+          <source src="https://firebasestorage.googleapis.com/v0/b/mern-app-426e4.appspot.com/o/pexels_videos_2759486%20(2160p).mp4?alt=media&token=e99caffc-e80c-442f-99cb-c7d54bf617e2" type="video/mp4" />
         </video>
 
         {/* Nakładka obszarowa na video, obsługująca kliknięcie */}

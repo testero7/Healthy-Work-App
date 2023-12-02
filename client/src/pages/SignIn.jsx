@@ -53,15 +53,15 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-cover pt-24">
-      <div className="w-80% h-96 flex bg-white bg-opacity-40 rounded-lg shadow-md">
-        <div className="w-1/2 p-12">
+    <div className="w-80% h-96 flex bg-white bg-opacity-40 rounded-lg shadow-md">
+      <div className="w-1/2 p-12">
           <h1 className="text-4xl font-semibold mb-4">Welcome to our platform</h1>
           <p className="text-lg text-gray-600">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id lectus vel nisl
             sollicitudin pharetra.
           </p>
         </div>
-        <div className="w-1/2 p-8">
+        <div className="w-1/2 p-8 mx-4">
           <h2 className="text-2xl font-semibold mb-4 text-blue-500">Sign In</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">

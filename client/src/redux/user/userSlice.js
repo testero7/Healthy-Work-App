@@ -50,6 +50,13 @@ const userSlice = createSlice({
             state.currentUser = null;
             state.loading = false;
             state.error = false;
+            localStorage.removeItem('notificationSettings');
+            localStorage.removeItem('breakStart');
+            localStorage.removeItem('breakEnd');
+            localStorage.removeItem('breakTimeLeft');
+            localStorage.removeItem('totalBreakTime');
+            localStorage.removeItem('elapsedTime');
+            localStorage.removeItem('timeToNextBreak');
         },
     }
 });

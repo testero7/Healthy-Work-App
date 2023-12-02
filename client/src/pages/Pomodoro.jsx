@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
-
+import {
+    signOut
+   } from '../redux/user/userSlice';
 export default function Pomodoro() {
   const [name, setName] = useState('');
   const [durationTime, setDurationTime] = useState('');
@@ -21,6 +23,7 @@ export default function Pomodoro() {
   const [isOtherModalOpen, setIsOtherModalOpen] = useState(false);
   const userId = currentUser ? currentUser._id : null;
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
   function getRefreshToken() {
     // Załóżmy, że currentUser jest dostępny w danym kontekście
     const refreshToken = currentUser ? currentUser.refreshToken : null;
@@ -40,7 +43,10 @@ export default function Pomodoro() {
         const { accessToken } = await response.json();
         return accessToken;
       } else {
+        dispatch(signOut());
+        console.log(currentUser.state);
         throw new Error('Błąd odświeżania tokenu');
+
       }
     } catch (error) {
       console.error('Błąd odświeżania tokenu:', error);
@@ -64,10 +70,11 @@ export default function Pomodoro() {
 
         if (!refreshToken) {
           console.error('Unauthorized request. No refresh token available.');
+          
           throw new Error('Unauthorized request');
+         
         }
 
-        
 
         // Retry the original request with the new access token
         const newOptions = {
