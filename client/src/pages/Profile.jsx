@@ -25,6 +25,7 @@ export default function Profile() {
     const [ formData, setFormData] = useState({});
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(true);
     console.log(currentUser);
     
     function getRefreshToken() {
@@ -91,6 +92,9 @@ export default function Profile() {
       } catch (error) {
         console.error('Fetch error:', error);
         throw error;
+      }
+      finally{
+        setIsLoading(false);
       }
     }
     
@@ -195,9 +199,11 @@ export default function Profile() {
 
   return (
     <div className="h-screen flex items-center justify-center">
+      
       <div className="w-1/3 mb-24 bg-gray-100">
         <div className="p-3 mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-lg">
+          
             <h1 className="text-4xl font-sans text-center mb-7 text-blue-400">Profile</h1>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <input

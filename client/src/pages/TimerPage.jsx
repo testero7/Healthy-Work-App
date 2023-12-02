@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import moment from 'moment';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const TimerPage = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ const TimerPage = () => {
   const [timerStarted, setTimerStarted] = useState(false);
   const [timerValue, setTimerValue] = useState(0);
   const navigate = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(true);
   function getRefreshToken() {
     // Załóżmy, że currentUser jest dostępny w danym kontekście
     const refreshToken = currentUser ? currentUser.refreshToken : null;
@@ -77,6 +78,9 @@ const TimerPage = () => {
     } catch (error) {
       console.error('Fetch error:', error);
       throw error;
+    }
+    finally{
+      setIsLoading(false);
     }
   }
 
@@ -197,7 +201,9 @@ const TimerPage = () => {
   
   return (
     <div className="flex flex-col items-center justify-center h-screen text-white">
-      {config && (
+      {isLoading && <LoadingSpinner />} {/* Display loading spinner when isLoading is true */}
+
+{!isLoading && config && (
         <div>
           <h2 className="text-3xl text-center font-bold mb-4">Configuration Details</h2>
           
@@ -237,7 +243,7 @@ const TimerPage = () => {
           </table>
         </div>
       )}
-      {!timerStarted && (
+      {!isLoading && !timerStarted && (
         <div className="flex">
           <button
             onClick={startTimer}

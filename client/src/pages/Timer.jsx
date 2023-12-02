@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PomodoroDictionary from './PomodoroDictionary';
 import { breakDictionary } from './PomodoroDictionary';
+import LoadingSpinner from '../components/LoadingSpinner';
 const Timer = () => {
   const [config, setConfig] = useState(null);
   const { configId, pomodoroId } = useParams();
@@ -18,7 +19,10 @@ const Timer = () => {
   const userId = currentUser._id;
   const [totalBreakTime, setTotalBreakTime] = useState(0);
 const [notifications, setNotifications] = useState([]);
+const [isLoading, setIsLoading] = useState(true);
+
 const notificationAudio = new Audio("https://firebasestorage.googleapis.com/v0/b/mern-app-426e4.appspot.com/o/notification.mp3?alt=media&token=49c44446-5612-4dc3-ab91-7e750ce70b5a");
+
 
 function getRefreshToken() {
   // Załóżmy, że currentUser jest dostępny w danym kontekście
@@ -84,6 +88,9 @@ async function authenticatedFetch(url, options) {
   } catch (error) {
     console.error('Fetch error:', error);
     throw error;
+  }
+  finally{
+    setIsLoading(false);
   }
 }
 
@@ -471,41 +478,44 @@ useEffect(() => {
   };
 
   return (
-
     <div className="flex justify-center items-center h-screen">
-      
-      <div className=" bg-black text-white  rounded-3xl mb-52">
-        <div className=" p-28 bg-cyan-400 m-7 " style={{ background: 'linear-gradient(-45deg, #1f272b 0%, #1f272b 50%, #1b1f21 50%, #1b1f21 100%)' }}>
-          {inBreak ? (
-            <div>
-              <p className='text-6xl text-white'>
-                {inBreak
-                  ? (pomodoro && calculateTime(pomodoro.endTime))
-                  : (breakTimeLeft !== null
-                    ? `${Math.floor(breakTimeLeft / 3600).toString().padStart(2, '0')}:${Math.floor((breakTimeLeft % 3600) / 60).toString().padStart(2, '0')}:${(breakTimeLeft % 60).toString().padStart(2, '0')}`
-                    : '00:00:00')}
-              </p>
-
-              {breakTimeLeft !== null && (
-                <p className='mt-4 text-red-500'>Break time left: {`${Math.floor(breakTimeLeft / 3600).toString().padStart(2, '0')}:${Math.floor((breakTimeLeft % 3600) / 60).toString().padStart(2, '0')}:${(breakTimeLeft % 60).toString().padStart(2, '0')}`}</p>
-              )}
-            </div>
-          ) : (
-            <div>
-              <p className='text-6xl text-white'>{pomodoro && calculateTime(pomodoro.endTime)}</p>
-
-              {timeToNextBreak !== null && (
-                <p className='mt-4 text-green-500'>
-                  Time to next break: {`${timeToNextBreak.minutes.toString().padStart(2, '0')}:${timeToNextBreak.seconds.toString().padStart(2, '0')}`}
+      {isLoading && <LoadingSpinner />} {/* Display loading spinner when loading is true */}
+  
+      {!isLoading && (
+        <div className=" bg-black text-white  rounded-3xl mb-52">
+          <div className=" p-28 bg-cyan-400 m-7 " style={{ background: 'linear-gradient(-45deg, #1f272b 0%, #1f272b 50%, #1b1f21 50%, #1b1f21 100%)' }}>
+            {inBreak ? (
+              <div>
+                <p className='text-6xl text-white'>
+                  {inBreak
+                    ? (pomodoro && calculateTime(pomodoro.endTime))
+                    : (breakTimeLeft !== null
+                      ? `${Math.floor(breakTimeLeft / 3600).toString().padStart(2, '0')}:${Math.floor((breakTimeLeft % 3600) / 60).toString().padStart(2, '0')}:${(breakTimeLeft % 60).toString().padStart(2, '0')}`
+                      : '00:00:00')}
                 </p>
-              )}
-            </div>
-          )}
+  
+                {breakTimeLeft !== null && (
+                  <p className='mt-4 text-red-500'>Break time left: {`${Math.floor(breakTimeLeft / 3600).toString().padStart(2, '0')}:${Math.floor((breakTimeLeft % 3600) / 60).toString().padStart(2, '0')}:${(breakTimeLeft % 60).toString().padStart(2, '0')}`}</p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <p className='text-6xl text-white'>{pomodoro && calculateTime(pomodoro.endTime)}</p>
+  
+                {timeToNextBreak !== null && (
+                  <p className='mt-4 text-green-500'>
+                    Time to next break: {`${timeToNextBreak.minutes.toString().padStart(2, '0')}:${timeToNextBreak.seconds.toString().padStart(2, '0')}`}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+  
       <PomodoroDictionary config={config} pomodoro={pomodoro} />
     </div>
   );
-};
+                }  
 
 export default Timer;

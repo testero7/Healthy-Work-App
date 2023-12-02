@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Pomodoro() {
   const [name, setName] = useState('');
@@ -19,7 +20,7 @@ export default function Pomodoro() {
   const [selectedPomodoro, setSelectedPomodoro] = useState(null);
   const [isOtherModalOpen, setIsOtherModalOpen] = useState(false);
   const userId = currentUser ? currentUser._id : null;
-  
+  const [isLoading, setIsLoading] = useState(true);
   function getRefreshToken() {
     // Załóżmy, że currentUser jest dostępny w danym kontekście
     const refreshToken = currentUser ? currentUser.refreshToken : null;
@@ -84,6 +85,9 @@ export default function Pomodoro() {
     } catch (error) {
       console.error('Fetch error:', error);
       throw error;
+    }
+    finally{
+      setIsLoading(false);
     }
   }
 
@@ -271,22 +275,26 @@ export default function Pomodoro() {
   };
 
   return (
-  <div className="min-h-screen container mx-auto p-4">
+    <div className="min-h-screen container mx-auto p-4">
+    {isLoading && <LoadingSpinner />} {/* Display loading spinner when isLoading is true */}
+
+    {!isLoading && (
+      <>
     <h1 className="text-2xl text-white font-bold mb-4">Pomodoro Page</h1>
 
-    <button
-      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mb-4"
-      onClick={() => {
-        setName('');
-        setDurationTime('');
-        setBreakAfter('');
-        setBreakTime('');
-        setEditConfig(null);
-        setIsModalOpen(true);
-      }}
-    >
-      Add Pomodoro
-    </button>
+<button
+  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mb-4"
+  onClick={() => {
+    setName('');
+    setDurationTime('');
+    setBreakAfter('');
+    setBreakTime('');
+    setEditConfig(null);
+    setIsModalOpen(true);
+  }}
+>
+  Add Pomodoro
+</button>
 
     {isModalOpen && (
       <div
@@ -510,8 +518,10 @@ export default function Pomodoro() {
               </button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+          </div>
+        )}
+      </>
+    )}
+  </div>
+);
 }

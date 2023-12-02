@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Settings() {
   const [key, setKey] = useState(0);
@@ -29,7 +30,7 @@ export default function Settings() {
 
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const userId = currentUser ? currentUser._id : null;
-
+  const [isLoading, setIsLoading] = useState(true);
   function getRefreshToken() {
     // Załóżmy, że currentUser jest dostępny w danym kontekście
     const refreshToken = currentUser ? currentUser.refreshToken : null;
@@ -94,6 +95,9 @@ export default function Settings() {
     } catch (error) {
       console.error('Fetch error:', error);
       throw error;
+    }
+    finally{
+      setIsLoading(false);
     }
   }
 
@@ -432,6 +436,8 @@ useEffect(() => {
   };
   return (
     <div key={key} className="min-h-screen container max-w-2xl mx-auto">
+       {isLoading && <LoadingSpinner />}
+    {!isLoading && (
       <div className="flex items-center justify-between">
         <label className="relative inline-flex items-center cursor-pointer">
           <input
@@ -468,8 +474,8 @@ useEffect(() => {
           </div>
         )}
       </div>
-  
-      {showForm && (
+   )}
+      {!isLoading && showForm && (
         <div className="mt-4 p-4 bg-gray-100">
           <h3 className="text-lg font-semibold mb-4">Ustawienia powiadomień</h3>
           <form>
@@ -686,7 +692,7 @@ useEffect(() => {
         </div>
       )}
   
-  {showForm && showModal && (
+  {!isLoading && showForm && showModal && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
     <div className="bg-white p-4 rounded">
       <p>Czy na pewno chcesz wyłączyć powiadomienia? To spowoduje zresetowanie preferencji.</p>
