@@ -15,7 +15,7 @@ const TimerPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   function getRefreshToken() {
-    // Załóżmy, że currentUser jest dostępny w danym kontekście
+    
     const refreshToken = currentUser ? currentUser.refreshToken : null;
     return refreshToken;
   }
@@ -62,7 +62,7 @@ const TimerPage = () => {
 
         
 
-        // Retry the original request with the new access token
+        
         const newOptions = {
           ...options,
           headers: {
@@ -132,7 +132,7 @@ const TimerPage = () => {
 
     const interval = setInterval(() => {
       updateTimerValue();
-    }, 60000); // Update every minute
+    }, 60000); 
 
     return () => clearInterval(interval);
   }, [pomodoro]);
@@ -150,7 +150,7 @@ const TimerPage = () => {
 
     const interval = setInterval(() => {
       updateStartEndTime();
-    }, 30000); // Update every 30 seconds
+    }, 30000); 
 
     return () => clearInterval(interval);
   }, [config]);
@@ -158,12 +158,12 @@ const TimerPage = () => {
   const startTimer = async () => {
     if (!config) return;
   
-    // Resetujemy wartości w localStorage
+    
     localStorage.setItem('breakTimeLeft', '0');
     localStorage.setItem('totalBreakTime', '0');
     localStorage.setItem('elapsedTime', '0');
-    localStorage.removeItem('breakStart'); // Usuwamy breakStart
-    localStorage.removeItem('breakEnd'); // Usuwamy breakEnd
+    localStorage.removeItem('breakStart'); 
+    localStorage.removeItem('breakEnd'); 
   
     const { durationTime } = config;
   
@@ -201,7 +201,7 @@ const TimerPage = () => {
   
   return (
     <div className="flex flex-col items-center justify-center h-screen text-white">
-      {isLoading && <LoadingSpinner />} {/* Display loading spinner when isLoading is true */}
+      {isLoading && <LoadingSpinner />} 
 
 {!isLoading && config && (
         <div>

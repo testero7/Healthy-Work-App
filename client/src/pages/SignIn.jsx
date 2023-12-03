@@ -41,7 +41,7 @@ const SignIn = () => {
         return;
       }
 
-      // Ustaw ciasteczko z refresh tokenem jako HttpOnly
+      
       document.cookie = `refreshToken=${data.refreshToken}; HttpOnly`;
 
       dispatch(signInSuccess(data));

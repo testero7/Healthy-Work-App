@@ -44,7 +44,7 @@ export default function Pomodoro() {
         return accessToken;
       } else {
         dispatch(signOut());
-        console.log(currentUser.state);
+        //console.log(currentUser.state);
         throw new Error('Błąd odświeżania tokenu');
 
       }
@@ -76,7 +76,7 @@ export default function Pomodoro() {
         }
 
 
-        // Retry the original request with the new access token
+  
         const newOptions = {
           ...options,
           headers: {
@@ -114,14 +114,14 @@ export default function Pomodoro() {
   }, [userId]);
 
   useEffect(() => {
-    // Update sessions every minute
+    
     const intervalId = setInterval(updateSessions, 60000);
 
     return () => clearInterval(intervalId);
   }, [userId, sessions1]);
 
   useEffect(() => {
-    // Fetch Pomodoro sessions
+    
     authenticatedFetch(`/api/pomodoro/getPomodoro/${userId}`)
       .then((response) => response.json())
       .then((data) => setSessions1(data))
@@ -129,7 +129,7 @@ export default function Pomodoro() {
   }, [userId]);
 
   useEffect(() => {
-    // Update sessions every minute
+    
     const intervalId = setInterval(updateSessions, 60000);
 
     return () => clearInterval(intervalId);
@@ -283,7 +283,7 @@ export default function Pomodoro() {
 
   return (
     <div className="min-h-screen container mx-auto p-4">
-    {isLoading && <LoadingSpinner />} {/* Display loading spinner when isLoading is true */}
+    {isLoading && <LoadingSpinner />} 
 
     {!isLoading && (
       <>

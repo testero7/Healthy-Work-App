@@ -56,7 +56,7 @@ export const getConfigurationsForUser = async (req, res, next) => {
   
 
 export const deleteConfiguration = async (req, res, next) => {
-    const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
+    const userId = req.params.id; 
     const configurationId = req.params.configurationId; // Pobierz ID configuration z parametru URL
   
     // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
@@ -82,7 +82,7 @@ export const deleteConfiguration = async (req, res, next) => {
         breakAfter, 
         breakTime} = req.body;
   
-    // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
+    
     if (req.user.id !== userId) {
       return next(errorHandler(401, 'You can only update Configurations for your own account!'));
     }

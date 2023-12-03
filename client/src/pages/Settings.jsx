@@ -19,7 +19,7 @@ export default function Settings() {
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
   const [isModalActive, setIsModalActive] = useState(false);
 
-  // Nowe stany dla przełączników każdego pola input
+  
   const [waterNotiEnabled, setWaterNotiEnabled] = useState(true);
   const [stretchNotiEnabled, setStretchNotiEnabled] = useState(true);
   const [eyeNotiEnabled, setEyeNotiEnabled] = useState(true);
@@ -32,7 +32,7 @@ export default function Settings() {
   const userId = currentUser ? currentUser._id : null;
   const [isLoading, setIsLoading] = useState(true);
   function getRefreshToken() {
-    // Załóżmy, że currentUser jest dostępny w danym kontekście
+    
     const refreshToken = currentUser ? currentUser.refreshToken : null;
     return refreshToken;
   }
@@ -79,7 +79,7 @@ export default function Settings() {
 
         
 
-        // Retry the original request with the new access token
+        
         const newOptions = {
           ...options,
           headers: {
@@ -184,11 +184,11 @@ useEffect(() => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
   
-    // Sprawdź czy wartość jest większa od 0, jeśli nie, ustaw na 1
+    
     const numericValue = parseInt(value, 10);
     const inputValue = isNaN(numericValue) || numericValue <= 0 ? 1 : numericValue;
   
-    // Dodaj warunek, aby wyłączyć pole input, gdy wartość wynosi 0
+    
     if (inputValue === 0) {
       switch (name) {
         case 'waterNoti':
@@ -251,7 +251,7 @@ useEffect(() => {
       [fieldName]: newValue,
     }));
   
-    // Ustaw wartość na 1 w inpucie, gdy przycisk toggle jest włączony
+    
     if (newValue === 1) {
       checkboxRef.current.checked = true;
     } else {
@@ -265,7 +265,7 @@ useEffect(() => {
       fetchNotification();
     }
 
-    // Odczytaj dane z localStorage
+    
     const savedData = JSON.parse(localStorage.getItem('notificationSettings'));
 
     if (savedData) {
@@ -282,7 +282,7 @@ useEffect(() => {
   }, [userId, key]);
 
   useEffect(() => {
-    // Zapisz dane w localStorage po zmianie stanu
+    
     const dataToSave = {
       formData,
       saveChangesEnabled,
@@ -400,7 +400,7 @@ useEffect(() => {
       setShowModal(true);
     }
 
-    // Dodaj warunek, aby zamykać modal tylko gdy jest otwarty
+    
     if (showModal) {
       setShowModal(false);
       setIsModalActive(false);
@@ -470,7 +470,7 @@ useEffect(() => {
         </label>
         {showForm && (
           <div className="flex items-center">
-            {/* Dodaj inne elementy, jeśli są potrzebne */}
+            
           </div>
         )}
       </div>

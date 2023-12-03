@@ -26,10 +26,10 @@ export default function Profile() {
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(true);
-    console.log(currentUser);
+    //console.log(currentUser);
     
     function getRefreshToken() {
-      // Załóżmy, że currentUser jest dostępny w danym kontekście
+      
       const refreshToken = currentUser ? currentUser.refreshToken : null;
       return refreshToken;
     }
@@ -76,7 +76,7 @@ export default function Profile() {
   
           
   
-          // Retry the original request with the new access token
+          
           const newOptions = {
             ...options,
             headers: {
@@ -135,7 +135,7 @@ export default function Profile() {
   };
 
   const handleConfirmAction = async () => {
-    // Handle the action (e.g., delete account) here
+  
    
     setShowModal(false);
 
@@ -309,4 +309,4 @@ export default function Profile() {
       </div>
     </div>
   );
-          }  
+}  

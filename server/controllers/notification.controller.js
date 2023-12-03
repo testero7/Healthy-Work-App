@@ -3,7 +3,7 @@ import { errorHandler } from "../utils/error.js";
 
 // Testowa metoda do wysyłania powiadomień
 export const testNotification = (req, res) => {
-  // Tutaj możesz zaimplementować logikę wysyłania testowego powiadomienia
+  
   res.status(200).json({ message: 'Test notification sent!' });
 };
 
@@ -21,7 +21,7 @@ export const getNotification = async (req, res, next) => {
   }
 };
 
-// Dodaj nowe ustawienia powiadomień dla danego użytkownika
+
 export const addNotification = async (req, res, next) => {
   const userId = req.params.id;
   const { waterNoti, stretchNoti, eyeNoti, postureNoti, lightNoti } = req.body;
@@ -46,7 +46,7 @@ export const addNotification = async (req, res, next) => {
   }
 };
 
-// Usuń ustawienia powiadomień dla danego użytkownika
+
 export const deleteNotification = async (req, res, next) => {
   const userId = req.params.id;
   const notificationId = req.params.notificationId;
@@ -61,7 +61,7 @@ export const deleteNotification = async (req, res, next) => {
   }
 };
 
-// Zaktualizuj ustawienia powiadomień dla danego użytkownika
+
 export const updateNotification = async (req, res, next) => {
   const userId = req.params.id;
   const notificationId = req.params.notificationId;

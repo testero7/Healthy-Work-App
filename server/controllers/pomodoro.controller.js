@@ -8,13 +8,13 @@ export const testPomodoro = (req, res) => {
         });
 };
 
-//dodac konfiguracje do pomdooro
+
 export const addPomodoro = async (req, res, next) => {
   const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
   const confId = req.params.confId; // Pobierz ID konfiguracji z parametru URL
   const { name, startTime, endTime, allTime, breakTime, breakCounter } = req.body;
 
-  // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
+  
   if (req.user.id !== userId) {
       return next(errorHandler(401, 'You can only add Pomodoro sessions for your own account!'));
   }
@@ -42,7 +42,7 @@ export const addPomodoro = async (req, res, next) => {
 
 
 export const getPomodorosForUser = async (req, res, next) => {
-    const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
+    const userId = req.params.id; 
     if (req.user.id !== userId) {
         return next(errorHandler(401, 'You can only get Pomodoro sessions for your own account!'));
       }
@@ -55,10 +55,10 @@ export const getPomodorosForUser = async (req, res, next) => {
 };
   
 export const getPomodoroById = async (req, res, next) => {
-  const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
-  const pomodoroId = req.params.pomodoroId; // Pobierz ID sesji Pomodoro z parametru URL
+  const userId = req.params.id; 
+  const pomodoroId = req.params.pomodoroId; 
 
-  // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
+  
   if (req.user.id !== userId) {
     return next(errorHandler(401, 'You can only get Pomodoro sessions for your own account!'));
   }
@@ -78,10 +78,10 @@ export const getPomodoroById = async (req, res, next) => {
 
 
 export const deletePomodoro = async (req, res, next) => {
-    const userId = req.params.id; // Pobierz ID użytkownika z parametru URL
-    const pomodoroId = req.params.pomodoroId; // Pobierz ID sesji Pomodoro z parametru URL
+    const userId = req.params.id; 
+    const pomodoroId = req.params.pomodoroId; 
   
-    // Sprawdź, czy przekazane ID użytkownika zgadza się z ID zalogowanego użytkownika
+    
     if (req.user.id !== userId) {
       return next(errorHandler(401, 'You can only delete Pomodoro sessions for your own account!'));
     }
@@ -98,7 +98,7 @@ export const deletePomodoro = async (req, res, next) => {
   export const updatePomodoro = async (req, res, next) => {
     const userId = req.params.id;
     const pomodoroId = req.params.pomodoroId;
-    const updateFields = req.body; // Przyjmuj wszystkie pola, które chcesz zaktualizować
+    const updateFields = req.body;  
   
     if (req.user.id !== userId) {
       return next(errorHandler(401, 'You can only update Pomodoro sessions for your own account!'));

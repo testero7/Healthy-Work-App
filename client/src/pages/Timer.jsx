@@ -25,7 +25,7 @@ const notificationAudio = new Audio("https://firebasestorage.googleapis.com/v0/b
 
 
 function getRefreshToken() {
-  // Załóżmy, że currentUser jest dostępny w danym kontekście
+  
   const refreshToken = currentUser ? currentUser.refreshToken : null;
   return refreshToken;
 }
@@ -72,7 +72,7 @@ async function authenticatedFetch(url, options) {
 
       
 
-      // Retry the original request with the new access token
+      
       const newOptions = {
         ...options,
         headers: {
@@ -96,7 +96,7 @@ async function authenticatedFetch(url, options) {
 
 
 useEffect(() => {
-  // Sprawdź, czy config jest dostępny przed użyciem
+  
   if (config && inBreak && breakTimeLeft === config.breakTime * 60) {
       toast('Break has started!', {
           position: toast.POSITION.BOTTOM_RIGHT,
@@ -106,7 +106,7 @@ useEffect(() => {
           autoClose: 5000
       });
   }
-  // Sprawdź, czy config jest dostępny przed użyciem
+  
   if (config && inBreak && breakTimeLeft === 0) {
       toast('Break has ended!', {
           position: toast.POSITION.BOTTOM_RIGHT,
@@ -128,21 +128,21 @@ useEffect(() => {
   });
 }, []);
 
-console.log("Break Dictionary in Another File:", breakDictionary);
+//console.log("Break Dictionary in Another File:", breakDictionary);
 useEffect(() => {
-  // Call the getNotifications function here
+  
   const notificationIds = getNotifications();
 
-  // Clear scheduled notifications in the cleanup function
+  
   return () => {
-    // Check if notificationIds is an array before calling forEach
+    
     if (Array.isArray(notificationIds)) {
       notificationIds.forEach((notificationId) => {
         clearInterval(notificationId);
       });
     }
   };
-}, [/* dependencies */]);
+}, []);
 
 const getNotifications = async () => {
   try {
@@ -171,14 +171,14 @@ const getNotifications = async () => {
 
     setNotifications(notificationsInMinutes);
 
-    // Clear existing notifications
+    
     toast.dismiss();
 
-    // Schedule new notifications
+    
     const scheduledNotificationIds = scheduleNotifications(notificationsInMinutes);
-    console.log('Notifications scheduled.'); // Add this line
+    //console.log('Notifications scheduled.'); 
 
-    return scheduledNotificationIds; // This line should be replaced with the correct array of notification IDs
+    return scheduledNotificationIds; 
   } catch (error) {
     console.error(error);
     return [];
@@ -194,7 +194,7 @@ const scheduleNotifications = (notifications) => {
       const notificationId = setInterval(() => {
         let message = '';
 
-        // Set message based on notification type
+       
         switch (notificationType) {
           case 'eyeNoti':
             message = 'Take care of your eyes';
@@ -215,7 +215,7 @@ const scheduleNotifications = (notifications) => {
             message = 'Time to take care of something';
         }
 
-        // Wyświetl powiadomienie Toastify
+       
         toast(message, {
           position: toast.POSITION.BOTTOM_RIGHT,
           autoClose: 10000, // Czas wyświetlania w milisekundach
@@ -227,10 +227,10 @@ const scheduleNotifications = (notifications) => {
 
       scheduledNotificationIds.push(notificationId);
 
-      // Log countdown in the console
+      
       let countdown = intervalInMinutes;
       const countdownInterval = setInterval(() => {
-        console.log(`Next ${notificationType} notification in: ${countdown} minutes`);
+        //console.log(`Next ${notificationType} notification in: ${countdown} minutes`);
         countdown -= 1;
 
         if (countdown < 0) {
@@ -292,7 +292,7 @@ useEffect(() => {
         }
 
         const data = await response.json();
-        console.log('Pobrano konfigurację:', data);
+        //console.log('Pobrano konfigurację:', data);
         setConfig(data);
 
         const breakDuration = data.breakTime * 60;
@@ -363,7 +363,7 @@ useEffect(() => {
       const now = new Date();
       const end = new Date(pomodoro.endTime);
   
-      // Check if current time is within break intervals
+      
       const breakInterval = Object.entries(breakDictionary).find(([start, end]) => {
         const breakStartTime = new Date(start);
         const breakEndTime = new Date(end);
@@ -374,18 +374,18 @@ useEffect(() => {
         setInBreak(true);
         const [breakStart, breakEnd] = breakInterval;
   
-        // Calculate breakTimeLeft based on the difference between breakStart and breakEnd
+        
         const breakStartTime = new Date(breakStart);
         const breakEndTime = new Date(breakEnd);
         const diffDuringBreak = breakEndTime - now;
         setBreakTimeLeft(Math.floor(diffDuringBreak / 1000));
   
-        // Store breakStart and breakEnd in localStorage for consistency
+        
         localStorage.setItem('breakStart', breakStartTime.toISOString());
         localStorage.setItem('breakEnd', breakEndTime.toISOString());
       } else {
         if (inBreak) {
-          // Check if the break has just finished
+          
           if (breakTimeLeft === 0) {
             setInBreak(false);
             setBreakTimeLeft(null);
@@ -394,11 +394,11 @@ useEffect(() => {
             localStorage.removeItem('breakTimeLeft');
             setTimeToNextBreak(null);
           } else {
-            // Continue decrementing breakTimeLeft
+            
             setBreakTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
           }
         } else {
-          // Find the next break start time
+          
           const nextBreakStart = Object.keys(breakDictionary).find((start) => {
             const breakStartTime = new Date(start);
             return breakStartTime > now;
@@ -411,7 +411,7 @@ useEffect(() => {
             const minutes = Math.floor(timeToNextBreak / (1000 * 60));
             const seconds = Math.floor((timeToNextBreak % (1000 * 60)) / 1000);
   
-            // Store timeToNextBreak as an object
+           
             const timeToNextBreakObject = {
               minutes,
               seconds,
@@ -420,7 +420,7 @@ useEffect(() => {
             setTimeToNextBreak(timeToNextBreakObject);
             localStorage.setItem('timeToNextBreak', JSON.stringify(timeToNextBreakObject));
           } else {
-            // If no more breaks today, reset timeToNextBreak
+            
             setTimeToNextBreak(null);
             localStorage.removeItem('timeToNextBreak');
           }

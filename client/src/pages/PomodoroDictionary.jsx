@@ -4,9 +4,9 @@ const PomodoroDictionary = ({ config, pomodoro }) => {
   const [breakDictionaryState, setBreakDictionaryState] = useState({});
   useEffect(() => {
     const calculateBreaks = () => {
-      console.log("Inside calculateBreaks");
-      console.log("Config:", config);
-      console.log("Pomodoro:", pomodoro);
+      // console.log("Inside calculateBreaks");
+      // console.log("Config:", config);
+      // console.log("Pomodoro:", pomodoro);
 
       if (!config || !pomodoro || !pomodoro.startTime || !pomodoro.endTime) {
         console.log("Config or Pomodoro data is not available.");
@@ -38,20 +38,20 @@ const PomodoroDictionary = ({ config, pomodoro }) => {
         currentBreakStartTime = new Date(currentBreakEndTime.getTime() + breakAfter * 60000);
       }
       if (Object.keys(newBreakDictionary).length !== 0) {
-        breakDictionary = newBreakDictionary;  // Zaktualizuj zmienną breakDictionary
+        breakDictionary = newBreakDictionary;  
         setBreakDictionaryState(newBreakDictionary);
-        console.log("New Break Dictionary:", newBreakDictionary);
+        //console.log("New Break Dictionary:", newBreakDictionary);
       } else {
-        console.log("New Break Dictionary is empty.");
+        //console.log("New Break Dictionary is empty.");
       }
     };
     calculateBreaks();
   }, [config, pomodoro]);
 
   useEffect(() => {
-    console.log("Break Dictionary Config:", config);
-    console.log("Break Dictionary Pomodoro:", pomodoro);
-    console.log("Break Dictionary:", breakDictionaryState);
+    // console.log("Break Dictionary Config:", config);
+    // console.log("Break Dictionary Pomodoro:", pomodoro);
+    // console.log("Break Dictionary:", breakDictionaryState);
   }, [config, pomodoro, breakDictionaryState]);
 
   return null;

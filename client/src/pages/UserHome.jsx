@@ -5,12 +5,12 @@ const UserHome = () => {
   const videoRef = useRef(null);
 
   const handleButtonClick = () => {
-    // Obsługa kliknięcia przycisku, np. uruchomienie animacji
-    console.log('Start now clicked');
+    
+    //console.log('Start now clicked');
   };
 
   const handleVideoClick = () => {
-    // Obsługa kliknięcia na video, np. zatrzymanie/uruchomienie odtwarzania
+    
     if (videoRef.current) {
       if (videoRef.current.paused) {
         videoRef.current.play();
@@ -23,7 +23,7 @@ const UserHome = () => {
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="relative w-full h-full flex items-center justify-center">
-        {/* Dodanie filmiku w tle */}
+        
         <video
           ref={videoRef}
           autoPlay
